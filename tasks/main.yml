@@ -2,12 +2,12 @@
 - name: Copy package
   copy:
     src: "{{ stocks_pkg_dir }}/{{ stocks_pkg }}"
-    dest: "{{ remote_pkg_dir }}"
+    dest: "{{ stocks_remote_pkg_dir }}"
 
 - name: Install stocks package
   become: True
   pacman:
-    name: "{{ remote_pkg_dir }}/{{ stocks_pkg }}"
+    name: "{{ stocks_remote_pkg_dir }}/{{ stocks_pkg }}"
     state: present
 
 - name: Configure stocks
@@ -52,27 +52,27 @@
 
 - name: Setup database
   mysql_db:
-    name: "{{ mysql_stocks_database }}"
+    name: "{{ stocks_mysql_stocks_database }}"
     state: present
     login_user: root
-    login_password: "{{ mysql_root_password }}"
+    login_password: "{{ stocks_mysql_root_password }}"
 
 - name: Setup database user
   mysql_user:
-    name: "{{ mysql_stocks_username }}"
-    password: "{{ mysql_stocks_password }}"
+    name: "{{ stocks_mysql_stocks_username }}"
+    password: "{{ stocks_mysql_stocks_password }}"
     priv: stocks.*:ALL
     state: present
     login_user: root
-    login_password: "{{ mysql_root_password }}"
+    login_password: "{{ stocks_mysql_root_password }}"
 
 - name: Import database schema
   mysql_db:
-    name: "{{ mysql_stocks_database }}"
+    name: "{{ stocks_mysql_stocks_database }}"
     state: import
     target: "{{ stocks_base }}/schema.sql"
     login_user: root
-    login_password: "{{ mysql_root_password }}"
+    login_password: "{{ stocks_mysql_root_password }}"
 
 - name: Create CA
   command: "{{ stocks_lib }}/setup-ca {{ stocks_base }}/root/CA {{ stocks_base }}"
@@ -152,7 +152,7 @@
 
 - name: Add nginx reload to sudoers
   become: True
-  shell: echo {{ sudoers_line }} >> /etc/sudoers
+  shell: echo {{ stocks_sudoers_line }} >> /etc/sudoers
 
 - name: Install nginx config conservatively
   become: True
@@ -179,18 +179,18 @@
 - name: Setup first user in DB
   template: 
     src: initial_user.sql.j2
-    dest: "{{ remote_pkg_dir }}/initial_user.sql"
+    dest: "{{ stocks_remote_pkg_dir }}/initial_user.sql"
     owner: tomcat8
     group: tomcat8
     mode: 0644
     
 - name: Add first user
   mysql_db:
-    name: "{{ mysql_stocks_database }}"
+    name: "{{ stocks_mysql_stocks_database }}"
     state: import
-    target: "{{ remote_pkg_dir }}/initial_user.sql"
-    login_user: "{{ mysql_stocks_username }}"
-    login_password: "{{ mysql_stocks_password }}"
+    target: "{{ stocks_remote_pkg_dir }}/initial_user.sql"
+    login_user: "{{ stocks_mysql_stocks_username }}"
+    login_password: "{{ stocks_mysql_stocks_password }}"
 
 - name: Wait for Tomcat startup
   wait_for: 
