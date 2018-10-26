@@ -1,0 +1,24 @@
+---
+- name: Lookup package file
+  local_action:
+    module: find
+    paths: "{{ stocks_package_directory }}"
+    patterns: 'stocks-server-*.pkg.tar.xz'
+  register: found_files
+
+- name: Set package name
+  set_fact:
+    package: "{{ found_files.files | sort(attribute='path') | last }}"
+
+- name: Copy package
+  copy:
+    src: "{{ package.path }}"
+    dest: "{{ stocks_remote_pkg_dir }}"
+  register: copied_file
+
+- name: Install stocks package
+  become: True
+  pacman:
+    name: "{{ copied_file.path }}"
+    state: present
+

@@ -1,0 +1,5 @@
+---
+- name: Install stocks
+  package:
+    name: stocks
+    state: present

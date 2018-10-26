@@ -1,4 +1,8 @@
 ---
+stocks_assume_repo_installed: True
+
+stocks_package_directory: "/path/to/packages"
+
 stocks_mysql_server_host: "localhost"
 stocks_mysql_server_port: 3306
 stocks_mysql_root_password: ""

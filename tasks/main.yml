@@ -1,14 +1,11 @@
 ---
-- name: Copy package
-  copy:
-    src: "{{ stocks_pkg_dir }}/{{ stocks_pkg }}"
-    dest: "{{ stocks_remote_pkg_dir }}"
+- name: Install from file
+  include_tasks: package_installation.yml
+  when: not stocks_assume_repo_installed
 
-- name: Install stocks package
-  become: True
-  pacman:
-    name: "{{ stocks_remote_pkg_dir }}/{{ stocks_pkg }}"
-    state: present
+- name: Install from repository
+  include_tasks: repo_installation.yml
+  when: stocks_assume_repo_installed
 
 - name: Configure stocks
   become: True
