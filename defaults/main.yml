@@ -22,4 +22,4 @@ stocks_first_ticket: "0000"
 
 stocks_ticket_timeout_minutes: 10
 
-stocks_sudoers_line: "tomcat8 ALL=NOPASSWD: {{ stocks_lib }}/nginx-reload"
+stocks_sudoers_line: "tomcat8 ALL=NOPASSWD: {{ stocks_lib }}/nginx-reload\n"

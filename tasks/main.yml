@@ -102,7 +102,13 @@
 
 - name: Add nginx reload to sudoers
   become: True
-  shell: echo {{ stocks_sudoers_line }} >> /etc/sudoers
+  copy:
+    content: "{{ stocks_sudoers_line }}"
+    dest: "/etc/sudoers.d/stocks"
+    owner: root
+    group: root
+    mode: 0400
+    validate: /usr/bin/visudo -cf %s
 
 - name: Install nginx config conservatively
   become: True
