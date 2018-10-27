@@ -1,17 +1,24 @@
 ---
 stocks_assume_repo_installed: True
 
+# only needed if stocks_assume_repo_installed is true
 stocks_package_directory: "/path/to/packages"
+
+stocks_tomcat_root: "/usr/share/tomcat8/"
+stocks_tomcat_service: "tomcat8"
+stocks_tomcat_user: "tomcat8"
 
 stocks_mysql_server_host: "localhost"
 stocks_mysql_server_port: 3306
-stocks_mysql_root_password: ""
+stocks_mysql_admin_user: "root"
+stocks_mysql_admin_password: "changeme"
 stocks_mysql_stocks_database: "stocks"
-stocks_mysql_stocks_username: "server"
-stocks_mysql_stocks_password: "linux"
+stocks_mysql_stocks_username: "stocks"
+stocks_mysql_stocks_password: "changeme"
 
 stocks_first_user: "Jack"
 stocks_first_device: "Device"
+stocks_first_ticket: "0000"
 
 stocks_ticket_timeout_minutes: 10
 

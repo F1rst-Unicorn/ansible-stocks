@@ -1,5 +1,5 @@
 ---
 - name: Install stocks
   package:
-    name: stocks
+    name: stocks-server
     state: present

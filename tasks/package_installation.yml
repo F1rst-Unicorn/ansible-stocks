@@ -19,6 +19,6 @@
 - name: Install stocks package
   become: True
   pacman:
-    name: "{{ copied_file.path }}"
+    name: "{{ copied_file.dest }}"
     state: present
 
