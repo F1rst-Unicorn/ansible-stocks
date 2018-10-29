@@ -12,7 +12,7 @@ performed.
 
 Currently setting up the database is only supported by delegating this to the db
 host where a superuser is available who can authenticate via peer
-authentication.
+authentication and the stocks user is allowed to authenticate via password.
 
 ## References
 

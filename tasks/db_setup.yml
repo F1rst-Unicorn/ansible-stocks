@@ -25,13 +25,11 @@
 
 - name: Fill database
   delegate_to: "{{ stocks_postgresql_ansible_host }}"
-  become: True
-  become_user: "{{ stocks_postgresql_admin_user }}"
   postgresql_db:
     name: "{{ stocks_postgresql_database }}"
     state: restore
     target: "{{ item }}"
-    login_host: "{{ stocks_postgresql_host }}"
+    login_host: "localhost"
     port: "{{ stocks_postgresql_port }}"
     login_user: "{{ stocks_postgresql_options.user }}"
     login_password: "{{ stocks_postgresql_options.password }}"
