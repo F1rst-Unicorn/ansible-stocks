@@ -1,9 +1,25 @@
-## {{ ansible_managed }}
-
+# {{ ansible_managed }}
+# Properties used for MariaDB connections
 de.njsm.stocks.internal.db.databaseAddress={{ stocks_mysql_server_host }}
 de.njsm.stocks.internal.db.databasePort={{ stocks_mysql_server_port }}
 de.njsm.stocks.internal.db.databaseName={{ stocks_mysql_stocks_database }}
 de.njsm.stocks.internal.db.databaseUsername={{ stocks_mysql_stocks_username }}
 de.njsm.stocks.internal.db.databasePassword={{ stocks_mysql_stocks_password }}
 
+# Properties used for PostgreSQL connections
+de.njsm.stocks.server.v2.db.host={{ stocks_postgresql_host }}
+de.njsm.stocks.server.v2.db.port={{ stocks_postgresql_port }}
+de.njsm.stocks.server.v2.db.name={{ stocks_postgresql_database }}
+
+# Variables prefixed with
+# "de.njsm.stocks.server.v2.db.postgres." will be ignored by stocks and passed
+# on to PostgreSQL's JDBC driver. See
+# https://jdbc.postgresql.org/documentation/94/connect.html
+# for a list of all configuration options
+{% for key in stocks_postgresql_options.keys() %}
+de.njsm.stocks.server.v2.db.postgres.{{ key }}={{ stocks_postgresql_options[key] }}
+{% endfor %}
+
+
 de.njsm.stocks.internal.ticketValidityTimeInMinutes={{ stocks_ticket_timeout_minutes }}
+

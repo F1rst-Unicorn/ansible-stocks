@@ -1,36 +1,21 @@
 ---
-- name: Setup database
-  mysql_db:
-    name: "{{ stocks_mysql_stocks_database }}"
-    state: present
-    login_host: "{{ stocks_mysql_server_host }}"
-    login_port: "{{ stocks_mysql_server_port }}"
-    login_user: "{{ stocks_mysql_admin_user }}"
-    login_password: "{{ stocks_mysql_admin_password }}"
-  register: db_presence
-
 - name: Setup database user
-  mysql_user:
-    name: "{{ stocks_mysql_stocks_username }}"
-    password: "{{ stocks_mysql_stocks_password }}"
-    priv: "{{ stocks_mysql_stocks_database }}.*:ALL"
-    state: present
-    login_host: "{{ stocks_mysql_server_host }}"
-    login_port: "{{ stocks_mysql_server_port }}"
-    login_user: "{{ stocks_mysql_admin_user }}"
-    login_password: "{{ stocks_mysql_admin_password }}"
-  when: db_presence.changed
+  delegate_to: "{{ stocks_postgresql_ansible_host }}"
+  become: True
+  become_user: "{{ stocks_postgresql_admin_user }}"
+  postgresql_user:
+    name: "{{ stocks_postgresql_options.user }}"
+    password: "{{ stocks_postgresql_options.password }}"
+  register: user_presence
 
-- name: Import database schema
-  mysql_db:
-    name: "{{ stocks_mysql_stocks_database }}"
-    state: import
-    target: "{{ stocks_base }}/schema.sql"
-    login_host: "{{ stocks_mysql_server_host }}"
-    login_port: "{{ stocks_mysql_server_port }}"
-    login_user: "{{ stocks_mysql_admin_user }}"
-    login_password: "{{ stocks_mysql_admin_password }}"
-  when: db_presence.changed
+- name: Setup database
+  delegate_to: "{{ stocks_postgresql_ansible_host }}"
+  become: True
+  become_user: "{{ stocks_postgresql_admin_user }}"
+  postgresql_db:
+    name: "{{ stocks_postgresql_database }}"
+    owner: "{{ stocks_postgresql_options.user }}"
+  register: db_presence
 
 - name: Copy SQL for first stocks user
   template:
@@ -38,13 +23,16 @@
     dest: "{{ stocks_remote_pkg_dir }}/initial_user.sql"
   when: db_presence.changed
 
-- name: Setup first stocks user
-  mysql_db:
-    name: "{{ stocks_mysql_stocks_database }}"
-    state: import
-    target: "{{ stocks_remote_pkg_dir }}/initial_user.sql"
-    login_host: "{{ stocks_mysql_server_host }}"
-    login_port: "{{ stocks_mysql_server_port }}"
-    login_user: "{{ stocks_mysql_admin_user }}"
-    login_password: "{{ stocks_mysql_admin_password }}"
+- name: Fill database
+  delegate_to: "{{ stocks_postgresql_ansible_host }}"
+  become: True
+  become_user: "{{ stocks_postgresql_admin_user }}"
+  postgresql_db:
+    name: "{{ stocks_postgresql_database }}"
+    state: restore
+    target: "{{ item }}"
   when: db_presence.changed
+  with_items:
+    - "{{ stocks_base }}/schema.sql"
+    - "{{ stocks_remote_pkg_dir }}/initial_user.sql"
+
