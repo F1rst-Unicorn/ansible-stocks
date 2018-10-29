@@ -31,6 +31,10 @@
     name: "{{ stocks_postgresql_database }}"
     state: restore
     target: "{{ item }}"
+    login_host: "{{ stocks_postgresql_host }}"
+    port: "{{ stocks_postgresql_port }}"
+    login_user: "{{ stocks_postgresql_options.user }}"
+    login_password: "{{ stocks_postgresql_options.password }}"
   when: db_presence.changed
   with_items:
     - "{{ stocks_base }}/schema.sql"
