@@ -16,14 +16,13 @@ stocks_mysql_stocks_database: "stocks"
 stocks_mysql_stocks_username: "stocks"
 stocks_mysql_stocks_password: "changeme"
 
-stocks_postgresql_ansible_host: "{{ inventory_hostname }}"
+stocks_local_database: True
 stocks_postgresql_host: "localhost"
 stocks_postgresql_admin_user: "postgres"
 stocks_postgresql_port: 5432
 stocks_postgresql_database: "stocks"
 stocks_postgresql_options: {}
 # - user: stocks
-
 
 stocks_first_user: "Jack"
 stocks_first_device: "Device"

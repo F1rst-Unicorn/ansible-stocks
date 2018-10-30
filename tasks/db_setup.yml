@@ -1,15 +1,12 @@
 ---
 - name: Setup database user
-  delegate_to: "{{ stocks_postgresql_ansible_host }}"
   become: True
   become_user: "{{ stocks_postgresql_admin_user }}"
   postgresql_user:
     name: "{{ stocks_postgresql_options.user }}"
-    password: "{{ stocks_postgresql_options.password }}"
-  register: user_presence
+    password: "{{ stocks_postgresql_options.password | default(None) }}"
 
 - name: Setup database
-  delegate_to: "{{ stocks_postgresql_ansible_host }}"
   become: True
   become_user: "{{ stocks_postgresql_admin_user }}"
   postgresql_db:
@@ -24,15 +21,14 @@
   when: db_presence.changed
 
 - name: Fill database
-  delegate_to: "{{ stocks_postgresql_ansible_host }}"
   postgresql_db:
     name: "{{ stocks_postgresql_database }}"
     state: restore
     target: "{{ item }}"
-    login_host: "localhost"
+    login_host: "{{ stocks_postgresql_host }}"
     port: "{{ stocks_postgresql_port }}"
     login_user: "{{ stocks_postgresql_options.user }}"
-    login_password: "{{ stocks_postgresql_options.password }}"
+    login_password: "{{ stocks_postgresql_options.password | default(None) }}"
   when: db_presence.changed
   with_items:
     - "{{ stocks_base }}/schema.sql"

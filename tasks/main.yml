@@ -44,6 +44,7 @@
 
 - name: Setup database
   include_tasks: db_setup.yml
+  when: stocks_local_database
 
 - name: Create CA
   become: True
