@@ -20,6 +20,10 @@ stocks_first_user: "Jack"
 stocks_first_device: "Device"
 stocks_first_ticket: "0000"
 
+# Milliseconds before DB or file system actions are considered failed
+stocks_circuit_breaker_timeout: 2000
+
+# Maximum time between adding a new device and registration
 stocks_ticket_timeout_minutes: 10
 
 stocks_sudoers_line: "tomcat8 ALL=NOPASSWD: {{ stocks_lib }}/nginx-reload\n"

@@ -3,6 +3,9 @@ de.njsm.stocks.server.v2.db.host={{ stocks_postgresql_host }}
 de.njsm.stocks.server.v2.db.port={{ stocks_postgresql_port }}
 de.njsm.stocks.server.v2.db.name={{ stocks_postgresql_database }}
 
+# Milliseconds before DB or file system actions are considered failed
+de.njsm.stocks.server.v2.circuitbreaker.timeout={{ stocks_circuit_breaker_timeout }}
+
 # Variables prefixed with
 # "de.njsm.stocks.server.v2.db.postgres." will be ignored by stocks and passed
 # on to PostgreSQL's JDBC driver. See
