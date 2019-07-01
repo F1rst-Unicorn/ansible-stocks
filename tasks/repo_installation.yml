@@ -1,5 +1,6 @@
 ---
 - name: Install stocks
+  become: True
   package:
     name: stocks-server
     state: present
