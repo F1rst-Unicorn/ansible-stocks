@@ -1,0 +1,19 @@
+---
+
+- name: Restart tomcat
+  become: True
+  service:
+    name: tomcat8
+    state: restarted
+
+- name: Reload nginx
+  become: True
+  service:
+    name: nginx
+    state: reloaded
+
+- name: Restart nginx
+  become: True
+  service:
+    name: nginx
+    state: restarted

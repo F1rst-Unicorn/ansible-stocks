@@ -21,7 +21,8 @@ In case of a remote database, set `stocks_local_database` to `False`. In that
 case no DB is configured, only the `stocks.properties` are set up to the
 configured values. It is up to you to
 
-* Configure the JDBC driver appropriately
+* Configure the JDBC driver appropriately by setting the `stocks_postgresql_*`
+  options.
 
 * Create the stocks db and user
 

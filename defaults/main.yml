@@ -1,12 +1,18 @@
 ---
-stocks_assume_repo_installed: True
+stocks_use_official_repo: True
+stocks_repo_url: https://j.njsm.de/repo/
 
-# only needed if stocks_assume_repo_installed is true
+# only needed if not using official repo
 stocks_package_directory: "/path/to/packages"
 
-stocks_tomcat_root: "/usr/share/tomcat8/"
-stocks_tomcat_service: "tomcat8"
+stocks_tomcat_root: "/usr/share/tomcat8/webapps"
 stocks_tomcat_user: "tomcat8"
+
+# Give this role control over the nginx.conf
+stocks_nginx_managed: True
+
+# Assume nginx is set up with sites-enabled/ and similar directories
+stocks_nginx_enable_site: False
 
 stocks_local_database: True
 stocks_postgresql_host: "localhost"
