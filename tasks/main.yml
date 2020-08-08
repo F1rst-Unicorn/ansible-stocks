@@ -16,6 +16,23 @@
     group: "{{ stocks_tomcat_user }}"
     mode: 0644
 
+- name: Setup database user
+  become: True
+  become_user: "{{ stocks_postgresql_admin_user }}"
+  postgresql_user:
+    name: "{{ stocks_postgresql_options.user }}"
+    password: "{{ stocks_postgresql_options.password | default(None) }}"
+  when: stocks_local_database
+
+- name: Setup database
+  become: True
+  become_user: "{{ stocks_postgresql_admin_user }}"
+  postgresql_db:
+    name: "{{ stocks_postgresql_database }}"
+    owner: "{{ stocks_postgresql_options.user }}"
+  register: db_presence
+  when: stocks_local_database
+
 - name: Link server.war
   become: True
   file:
@@ -30,9 +47,11 @@
     state: started
     enabled: True
 
-- name: Setup database
-  include_tasks: db_setup.yml
-  when: stocks_local_database
+- name: Copy SQL for first stocks user
+  template:
+    src: initial_user.sql.j2
+    dest: "{{ stocks_remote_pkg_dir }}/initial_user.sql"
+  when: db_presence.changed and stocks_local_database
 
 - name: Create CA
   become: True
@@ -127,3 +146,30 @@
     host: 127.0.0.1
     port: 8080
     state: started
+
+- name: Wait for migrations to run
+  postgresql_query:
+    db: "{{ stocks_postgresql_database }}"
+    login_host: "{{ stocks_postgresql_host }}"
+    port: "{{ stocks_postgresql_port }}"
+    login_user: "{{ stocks_postgresql_options.user }}"
+    login_password: "{{ stocks_postgresql_options.password | default(None) }}"
+    query: >
+      do $$begin
+        while (select count(*) from pg_catalog.pg_trigger where tgname = 'ean_number_timestamp_update') != 1 loop
+          perform pg_sleep(1);
+        end loop;
+      end$$;
+  when: db_presence.changed and stocks_local_database
+
+
+- name: Fill database
+  postgresql_db:
+    name: "{{ stocks_postgresql_database }}"
+    state: restore
+    target: "{{ stocks_remote_pkg_dir }}/initial_user.sql"
+    login_host: "{{ stocks_postgresql_host }}"
+    port: "{{ stocks_postgresql_port }}"
+    login_user: "{{ stocks_postgresql_options.user }}"
+    login_password: "{{ stocks_postgresql_options.password | default(None) }}"
+  when: db_presence.changed and stocks_local_database

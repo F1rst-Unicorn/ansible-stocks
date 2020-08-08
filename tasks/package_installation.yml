@@ -3,7 +3,7 @@
   local_action:
     module: find
     paths: "{{ stocks_package_directory }}"
-    patterns: 'stocks-server-*.pkg.tar.xz'
+    patterns: 'stocks-server-*.pkg.tar.zst'
   register: found_files
 
 - name: Set package name
@@ -18,7 +18,4 @@
 
 - name: Install stocks package
   become: True
-  pacman:
-    name: "{{ copied_file.dest }}"
-    state: present
-
+  command: "pacman --noconfirm -U {{ copied_file.dest }}"
