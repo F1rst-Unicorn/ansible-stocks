@@ -68,6 +68,7 @@
     remote_src: True
     owner: "{{ stocks_tomcat_user }}"
     group: "{{ stocks_tomcat_user }}"
+    mode: preserve
   with_items:
     - src: "{{ stocks_base }}/root/CA/certs/ca.cert.pem"
       dest: "{{ stocks_base }}/root/nginx/ca"
