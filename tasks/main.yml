@@ -157,7 +157,7 @@
     login_password: "{{ stocks_postgresql_options.password | default(None) }}"
     query: >
       do $$begin
-        while (select count(*) from pg_catalog.pg_trigger where tgname = 'ean_number_timestamp_update') != 1 loop
+        while (select count(*) from pg_catalog.pg_trigger where tgname = 'food_location_ref_location') = 0 loop
           perform pg_sleep(1);
         end loop;
       end$$;
