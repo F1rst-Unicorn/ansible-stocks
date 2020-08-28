@@ -19,6 +19,10 @@ stocks_postgresql_host: "localhost"
 stocks_postgresql_admin_user: "postgres"
 stocks_postgresql_port: 5432
 stocks_postgresql_database: "stocks"
+
+# Any parameters documented in
+# https://jdbc.postgresql.org/documentation/head/connect.html
+# are valid
 stocks_postgresql_options: {}
 # - user: stocks
 
@@ -27,9 +31,18 @@ stocks_first_device: "Device"
 stocks_first_ticket: "0000"
 
 # Milliseconds before DB or file system actions are considered failed
+# If you encounter failures stating timeouts for no good reason, increase this
+# value to adjust to your system's compute power
 stocks_circuit_breaker_timeout: 2000
 
-# Maximum time between adding a new device and registration
+# How much time does a new user's device have to register before its ticket
+# expires
 stocks_ticket_timeout_minutes: 10
 
+# How long back in time old records should be preserved. This value is an
+# ISO-8601 duration, see https://en.wikipedia.org/wiki/ISO_8601#Durations
+# Allowed units are "Y", "M", "W" and "D"
+stocks_history_max_period: P100Y
+
+# This line will be added to sudoers
 stocks_sudoers_line: "tomcat8 ALL=NOPASSWD: {{ stocks_lib }}/nginx-reload\n"
