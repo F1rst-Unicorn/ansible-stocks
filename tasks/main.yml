@@ -106,6 +106,7 @@
   args:
     creates: /etc/nginx/dhparam.pem
   notify: Restart nginx
+  when: stocks_nginx_generate_dhparam
 
 - name: Add nginx reload to sudoers
   become: True
@@ -133,6 +134,12 @@
     dest: /etc/nginx/sites-enabled/stocks.conf
     state: link
   when: stocks_nginx_enable_site
+  notify: Reload nginx
+
+- name: Enable generated dhparams
+  become: True
+  command: sed -i -e "s/#ssl_dhparam/ssl_dhparam/" /etc/nginx/sites-enabled/stocks.conf
+  when: stocks_nginx_generate_dhparam
   notify: Reload nginx
 
 - name: Start nginx server

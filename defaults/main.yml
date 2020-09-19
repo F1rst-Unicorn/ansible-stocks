@@ -10,6 +10,7 @@ stocks_tomcat_user: "tomcat8"
 
 # Give this role control over the nginx.conf
 stocks_nginx_managed: True
+stocks_nginx_generate_dhparam: True
 
 # Assume nginx is set up with sites-enabled/ and similar directories
 stocks_nginx_enable_site: False
