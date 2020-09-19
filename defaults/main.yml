@@ -45,4 +45,4 @@ stocks_ticket_timeout_minutes: 10
 stocks_history_max_period: P100Y
 
 # This line will be added to sudoers
-stocks_sudoers_line: "tomcat8 ALL=NOPASSWD: {{ stocks_lib }}/nginx-reload\n"
+stocks_sudoers_line: "tomcat8 ALL=NOPASSWD: /bin/systemctl reload nginx\n"
