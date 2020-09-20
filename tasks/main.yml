@@ -138,7 +138,10 @@
 
 - name: Enable generated dhparams
   become: True
-  command: sed -i -e "s/#ssl_dhparam/ssl_dhparam/" /etc/nginx/sites-enabled/stocks.conf
+  replace:
+    path: /etc/nginx/sites-enabled/stocks.conf
+    regexp: "#ssl_dhparam"
+    replace: ssl_dhparam
   when: stocks_nginx_generate_dhparam
   notify: Reload nginx
 
