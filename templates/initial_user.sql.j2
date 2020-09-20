@@ -1,3 +1,19 @@
-INSERT INTO "User" (name) VALUES ('{{ stocks_first_user }}');
-INSERT INTO "User_device" (name, belongs_to) VALUES ('{{ stocks_first_device }}', LASTVAL());
-INSERT INTO "Ticket" (ticket, belongs_device) VALUES ('{{ stocks_first_ticket }}', LASTVAL())
+begin transaction isolation level serializable;
+
+insert into "User" (name, initiates)
+values ('{{ stocks_first_user }}', 0);
+
+insert into "User_device" (name, belongs_to, initiates)
+values ('{{ stocks_first_device }}', lastval(), 0);
+
+update "User"
+set initiates = (select min("ID") from "User_device");
+
+update "User_device"
+set initiates = (select min("ID") from "User_device");
+
+insert into "Ticket" (ticket, belongs_device)
+select '0000', "ID"
+from "User_device";
+
+commit;

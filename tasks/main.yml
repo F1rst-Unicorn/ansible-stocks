@@ -167,7 +167,11 @@
     login_password: "{{ stocks_postgresql_options.password | default(None) }}"
     query: >
       do $$begin
-        while (select count(*) from pg_catalog.pg_trigger where tgname = 'food_location_ref_location') = 0 loop
+        while not (select exists (select from information_schema.tables where table_name = 'databasechangelog')) loop
+          perform pg_sleep(1);
+        end loop;
+
+        while (select count(*) from databasechangelog) != 39 loop
           perform pg_sleep(1);
         end loop;
       end$$;
