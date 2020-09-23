@@ -11,7 +11,16 @@
   become: True
   template:
     src: stocks.properties.j2
-    dest: "{{ stocks_etc }}/stocks.properties"
+    dest: "{{ stocks_etc }}/{{ stocks_instance }}.properties"
+    owner: "{{ stocks_tomcat_user }}"
+    group: "{{ stocks_tomcat_user }}"
+    mode: 0644
+
+- name: Configure stocks
+  become: True
+  template:
+    src: log4j2.xml.j2
+    dest: "{{ stocks_etc }}/log4j2-{{ stocks_instance }}.xml"
     owner: "{{ stocks_tomcat_user }}"
     group: "{{ stocks_tomcat_user }}"
     mode: 0644
@@ -37,7 +46,7 @@
   become: True
   file:
     src: "{{ stocks_lib }}/server.war"
-    dest: "{{ stocks_tomcat_root }}/stocks.war"
+    dest: "{{ stocks_tomcat_root }}/{{ stocks_instance }}.war"
     state: link
 
 - name: Start tomcat
@@ -55,10 +64,25 @@
 
 - name: Create CA
   become: True
-  become_user: "{{ stocks_tomcat_user }}"
-  command: "{{ stocks_lib }}/setup-ca {{ stocks_base }}/root/CA {{ stocks_base }}"
+  command: "{{ stocks_lib }}/setup-ca {{ stocks_base }}/instances/{{ stocks_instance }}/CA {{ stocks_base }}"
   args:
-    creates: "{{ stocks_base }}/root/CA"
+    creates: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA"
+
+- name: Change owner of CA
+  become: True
+  file:
+    name: "{{ stocks_base }}/instances/{{ stocks_instance }}"
+    owner: "{{ stocks_tomcat_user }}"
+    group: "{{ stocks_tomcat_user }}"
+    recurse: True
+
+- name: Create download point directory
+  become: True
+  file:
+    state: directory
+    path: "{{ stocks_base }}/instances/{{ stocks_instance }}/nginx"
+    owner: "{{ stocks_tomcat_user }}"
+    group: "{{ stocks_tomcat_user }}"
 
 - name: Create download points
   become: True
@@ -70,10 +94,10 @@
     group: "{{ stocks_tomcat_user }}"
     mode: preserve
   with_items:
-    - src: "{{ stocks_base }}/root/CA/certs/ca.cert.pem"
-      dest: "{{ stocks_base }}/root/nginx/ca"
-    - src: "{{ stocks_base }}/root/CA/intermediate/certs/ca-chain.cert.pem"
-      dest: "{{ stocks_base }}/root/nginx/chain"
+    - src: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA/certs/ca.cert.pem"
+      dest: "{{ stocks_base }}/instances/{{ stocks_instance }}/nginx/ca"
+    - src: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA/intermediate/certs/ca-chain.cert.pem"
+      dest: "{{ stocks_base }}/instances/{{ stocks_instance }}/nginx/chain"
 
 - name: Create nginx SSL
   become: True
@@ -90,14 +114,14 @@
     remote_src: True
     mode: 0400
   with_items:
-    - src: "{{ stocks_base }}/root/CA/certs/ca.cert.pem"
-      dest: stocks.cert.pem
-    - src: "{{ stocks_base }}/root/CA/intermediate/certs/ca-chain.cert.pem"
-      dest: stocks.ca-chain.pem
-    - src: "{{ stocks_base }}/root/CA/intermediate/certs/server.cert.pem"
-      dest: stocks.cert.pem
-    - src: "{{ stocks_base }}/root/CA/intermediate/private/server.key.pem"
-      dest: stocks.key.pem
+    - src: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA/certs/ca.cert.pem"
+      dest: stocks-{{ stocks_instance }}.cert.pem
+    - src: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA/intermediate/certs/ca-chain.cert.pem"
+      dest: stocks-{{ stocks_instance }}.ca-chain.pem
+    - src: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA/intermediate/certs/server.cert.pem"
+      dest: stocks-{{ stocks_instance }}.cert.pem
+    - src: "{{ stocks_base }}/instances/{{ stocks_instance }}/CA/intermediate/private/server.key.pem"
+      dest: stocks-{{ stocks_instance }}.key.pem
   notify: Restart nginx
 
 - name: Generate dhparams
@@ -127,19 +151,38 @@
   when: stocks_nginx_managed
   notify: Reload nginx
 
+- name: Setup nginx directories
+  become: True
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - /etc/nginx/sites-enabled
+    - /etc/nginx/sites-available
+
+- name: Configure nginx site
+  become: True
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/{{ stocks_instance }}.conf
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Enable site in nginx
   become: True
   file:
-    src: "{{ stocks_base }}/nginx-site.conf"
-    dest: /etc/nginx/sites-enabled/stocks.conf
+    src: /etc/nginx/sites-available/{{ stocks_instance }}.conf
+    dest: /etc/nginx/sites-enabled/{{ stocks_instance }}.conf
     state: link
-  when: stocks_nginx_enable_site
   notify: Reload nginx
 
 - name: Enable generated dhparams
   become: True
   replace:
-    path: /etc/nginx/sites-enabled/stocks.conf
+    path: /etc/nginx/sites-enabled/{{ stocks_instance }}.conf
     regexp: "#ssl_dhparam"
     replace: ssl_dhparam
   when: stocks_nginx_generate_dhparam

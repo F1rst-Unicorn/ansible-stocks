@@ -5,15 +5,20 @@ stocks_repo_url: https://j.njsm.de/repo/
 # only needed if not using official repo
 stocks_package_directory: "/path/to/packages"
 
+# The name of this instance. Change this to run multiple instance on one tomcat
+# servlet container.
+stocks_instance: "stocks"
+stocks_instance_ports:
+  ca: 10910
+  registration: 10911
+  server: 10912
+
 stocks_tomcat_root: "/usr/share/tomcat8/webapps"
 stocks_tomcat_user: "tomcat8"
 
 # Give this role control over the nginx.conf
 stocks_nginx_managed: True
 stocks_nginx_generate_dhparam: True
-
-# Assume nginx is set up with sites-enabled/ and similar directories
-stocks_nginx_enable_site: False
 
 stocks_local_database: True
 stocks_postgresql_host: "localhost"
