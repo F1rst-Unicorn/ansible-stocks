@@ -1,19 +1,7 @@
 begin transaction isolation level serializable;
 
-insert into "User" (name, initiates)
-values ('{{ stocks_first_user }}', 0);
+update "user" set name = '{{ stocks_first_user }}';
 
-insert into "User_device" (name, belongs_to, initiates)
-values ('{{ stocks_first_device }}', lastval(), 0);
-
-update "User"
-set initiates = (select min("ID") from "User_device");
-
-update "User_device"
-set initiates = (select min("ID") from "User_device");
-
-insert into "Ticket" (ticket, belongs_device)
-select '0000', "ID"
-from "User_device";
+update user_device set name = '{{ stocks_first_device }}';
 
 commit;
