@@ -32,6 +32,9 @@ stocks_postgresql_database: "stocks"
 stocks_postgresql_options: {}
 # - user: stocks
 
+# Log4J2 log level: debug, info, warn, error
+stocks_log_level: info
+
 stocks_first_user: "Jack"
 stocks_first_device: "Device"
 stocks_first_ticket: "0000"

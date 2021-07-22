@@ -35,11 +35,11 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="de.njsm.stocks.server" level="info" additivity="false">
+        <Logger name="de.njsm.stocks.server" level="{{ stocks_log_level }}" additivity="false">
             <AppenderRef ref="logfile"/>
         </Logger>
 
-        <Root level="info">
+        <Root level="{{ stocks_log_level }}">
             <AppenderRef ref="logfile"/>
         </Root>
     </Loggers>
