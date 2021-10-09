@@ -1,7 +1,7 @@
 begin transaction isolation level serializable;
 
-update "user" set name = '{{ stocks_first_user }}';
+update "user" set name = '{{ stocks_first_user }}' where id = 1;
 
-update user_device set name = '{{ stocks_first_device }}';
+update user_device set name = '{{ stocks_first_device }}' where id = 1;
 
 commit;
