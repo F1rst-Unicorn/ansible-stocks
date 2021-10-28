@@ -214,7 +214,7 @@
           perform pg_sleep(1);
         end loop;
 
-        while (select count(*) from databasechangelog) != 80 loop
+        while (select count(*) from databasechangelog) != 91 loop
           perform pg_sleep(1);
         end loop;
       end$$;
