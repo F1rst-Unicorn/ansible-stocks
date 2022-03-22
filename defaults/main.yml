@@ -39,11 +39,6 @@ stocks_first_user: "Jack"
 stocks_first_device: "Device"
 stocks_first_ticket: "0000"
 
-# Milliseconds before DB or file system actions are considered failed
-# If you encounter failures stating timeouts for no good reason, increase this
-# value to adjust to your system's compute power
-stocks_circuit_breaker_timeout: 2000
-
 # How much time does a new user's device have to register before its ticket
 # expires
 stocks_ticket_timeout_minutes: 10
