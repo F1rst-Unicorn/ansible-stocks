@@ -30,4 +30,4 @@ configured values. It is up to you to
 
 ## References
 
-* [Upstream](https://gitlab.com/veenj/stocks)
+* [Upstream](https://j.njsm.de/git/veenj/stocks)
